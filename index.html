@@ -167,6 +167,7 @@ let perguntas = [];
 let atual = 0;
 let pontos = 0;
 let erros = 0;
+let listaDeErrosTexto = []; // Armazena as perguntas que o usuário errou
 
 let tempo = 15;
 let timer;
@@ -206,6 +207,7 @@ function carregarFase() {
     atual = 0;
     pontos = 0;
     erros = 0;
+    listaDeErrosTexto = []; // Limpa os erros ao iniciar/reiniciar fase
 
     const fase = fases[faseAtual];
 
@@ -215,7 +217,6 @@ function carregarFase() {
     if (img && (img.includes(".jpg") || img.includes(".png") || img.includes(".jpeg") || img.includes(".webp"))) {
         document.body.style.backgroundImage = `url('${img}')`;
     } else {
-        // fallback caso não seja imagem válida
         document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1529070538774-1843cb3265df')`;
     }
 
@@ -258,6 +259,7 @@ function iniciarTimer() {
         if (tempo <= 0) {
             clearInterval(timer);
             erros++;
+            listaDeErrosTexto.push(perguntas[atual].pergunta); // Salva erro por tempo esgotado
             atual++;
             mostrar();
         }
@@ -311,6 +313,7 @@ function mostrar() {
             } else {
                 btn.classList.add("wrong");
                 erros++;
+                listaDeErrosTexto.push(q.pergunta); // Salva a pergunta que errou
             }
 
             setTimeout(() => {
@@ -336,10 +339,49 @@ function fim() {
         html = `
             <h2>❌ Você errou ${erros}</h2>
             <button class="action" onclick="tentarNovamente()">Tentar Novamente</button>
+            
+            <div style="margin-top: 15px; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="font-size: 13px; opacity: 0.8;">Quer saber quais questões você errou?</p>
+                <button class="action" style="background: #00bcd4;" onclick="chamarMonetag()">
+                    📺 Ver Erros (Anúncio)
+                </button>
+            </div>
+            
+            <div id="box-erros" style="display:none; margin-top: 15px; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
+                <strong style="color: #facc15; font-size: 14px;">Questões para revisar:</strong>
+                <ul id="lista-final-erros" style="padding-left: 20px; font-size: 13px; color: #ddd; margin-top: 5px;"></ul>
+            </div>
         `;
     }
 
     document.getElementById("quiz").innerHTML = html;
+}
+
+function chamarMonetag() {
+    // Link direto da Monetag fornecido
+    const linkMonetag = "https://omg10.com/4/10956015"; 
+    
+    // Abre o anúncio em nova aba
+    window.open(linkMonetag, '_blank');
+
+    // Feedback visual e liberação dos erros após "visto"
+    const btn = event.target;
+    const textoOriginal = btn.innerText;
+    btn.innerText = "Carregando...";
+    btn.disabled = true;
+
+    setTimeout(() => {
+        const box = document.getElementById("box-erros");
+        const lista = document.getElementById("lista-final-erros");
+        
+        if (box) {
+            box.style.display = "block";
+            lista.innerHTML = listaDeErrosTexto.map(item => `<li>${item}</li>`).join('');
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+        btn.innerText = textoOriginal;
+        btn.disabled = false;
+    }, 2000); 
 }
 
 function tentarNovamente() {
@@ -401,10 +443,8 @@ function proximaFase() {
     // Atualiza a cada 30 segundos
     setInterval(refreshSurfeBanner, 30000);
 </script>
-</script>
-</script>
+
 <script src="https://www.highperformanceformat.com/2a5e7302edec5e07fb8153e06aa96446/invoke.js"></script>
-</div>
 
 </body>
 </html>
