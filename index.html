@@ -3,7 +3,6 @@
 <head>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="application-name" content="QUIZ">
     <meta name="apple-mobile-web-app-title" content="QUIZ">
 
@@ -22,171 +21,241 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     position: relative;
+    background-color: #0f172a;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
+    overflow-x: hidden;
 }
 
-/* overlay estilo game */
 body::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.6), rgba(2, 6, 23, 0.95));
     z-index: -1;
 }
 
 .container {
     width: 100%;
     max-width: 480px;
-    padding: 10px;
+    padding: 20px;
     color: white;
+    z-index: 1;
 }
 
 h1 {
     text-align: center;
-    font-size: 22px;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    font-size: 26px;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(to bottom, #fff, #facc15);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(250, 204, 21, 0.4));
+}
+
+.logo-quiz {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 15px auto;
+    border-radius: 50%; 
+    border: 3px solid #facc15;
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
+    animation: logoPulse 2s infinite ease-in-out;
+}
+
+@keyframes logoPulse {
+    0% { transform: scale(1); box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 0 25px rgba(250, 204, 21, 0.7); }
+    100% { transform: scale(1); box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
 }
 
 .counter {
     text-align: center;
-    margin-bottom: 10px;
-    font-size: 14px;
-    opacity: 0.9;
+    margin-bottom: 15px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #94a3b8;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.coin-display {
+    color: #facc15;
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+}
+
+.coin-effect {
+    position: fixed;
+    color: #facc15;
+    font-weight: bold;
+    font-size: 24px;
+    pointer-events: none;
+    z-index: 1000;
+    animation: moveUp 1s ease-out forwards;
+    text-shadow: 0 0 10px rgba(0,0,0,1);
+}
+
+@keyframes moveUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100px); opacity: 0; }
 }
 
 .card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    padding: 18px;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 25px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .fase-info {
     text-align: center;
-    margin-bottom: 12px;
-    font-weight: bold;
+    margin-bottom: 15px;
+    font-weight: 800;
     color: #facc15;
-    background: rgba(0,0,0,0.4);
-    padding: 6px 10px;
-    border-radius: 12px;
+    background: rgba(250, 204, 21, 0.1);
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    padding: 8px 16px;
+    border-radius: 50px;
     display: inline-block;
+    font-size: 12px;
 }
 
 .timer {
     color: #facc15;
     font-weight: bold;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     text-align: center;
+    font-family: monospace;
+    font-size: 18px;
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 20px;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    font-weight: 600;
 }
 
 button {
     width: 100%;
-    padding: 14px;
-    margin: 8px 0;
+    padding: 16px;
+    margin: 10px 0;
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-voltar {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 10px;
-    width: auto; /* Para não ocupar a largura toda */
-    display: inline-block;
-}
-
-.btn-voltar:hover {
-    background: rgba(239, 68, 68, 0.3); /* Fica levemente avermelhado no hover */
+    width: auto;
 }
 
 .option {
-    background: rgba(255,255,255,0.12);
-    color: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.option:hover {
-    transform: scale(1.02);
-    background: rgba(255,255,255,0.18);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+    padding-left: 20px;
 }
 
 .correct {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    color: white;
 }
 
 .wrong {
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+    color: white;
 }
 
 .action {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    font-weight: bold;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    text-transform: uppercase;
 }
 
-/* Estilo para os botões do menu principal */
-.btn-categoria {
-    background: linear-gradient(135deg, #facc15, #ca8a04);
-    color: #000;
-    font-weight: bold;
-    margin-top: 15px;
+/* Estilos do Ranking */
+.rank-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 8px 0;
+    border-radius: 12px;
+    border-left: 4px solid #facc15;
+}
+.rank-pos { font-weight: bold; color: #facc15; margin-right: 8px; }
+input#nomeRanking {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(250, 204, 21, 0.5);
+    background: rgba(15, 23, 42, 0.8);
+    color: white;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
-body {
-    padding-bottom: 60px;
-}
+body { padding-bottom: 80px; }
 
 @media (max-width: 500px) {
-    .card { padding: 15px; }
-    h2 { font-size: 16px; }
+    .container { padding: 15px; }
+    .card { padding: 20px; border-radius: 20px; }
 }
 </style>
-
 </head>
-
 <body>
 
 <div class="container">
+    <h1>🎯 Teste Seu QI</h1>
 
-<h1>🎯 Quiz por Fases</h1>
+    <div class="counter" id="hud" style="display:none;">
+        <div>⏱ <span id="globalTime">0</span>s</div>
+        <div class="coin-display">💰 <span id="coinCount">0</span></div>
+    </div>
 
-<div class="counter" id="hud" style="display:none;">
-⏱ Tempo total: <span id="globalTime">0</span>s
-</div>
-
-<div id="quiz" class="card">
-    <!-- Menu Inicial -->
-    <div id="menu-inicial">
-        <h2 style="margin-bottom: 20px;">Escolha uma Categoria</h2>
-        <button class="btn-categoria" onclick="escolherCategoria('religiao')">📖 Religião</button>
-        <button class="btn-categoria" onclick="escolherCategoria('curiosidades')">💡 Curiosidades</button>
+    <div id="quiz" class="card">
+        <div id="menu-inicial">
+            <img src="logo.png" alt="Logo" class="logo-quiz">
+            <h2 style="margin-bottom: 20px;">Teste seu conhecimento e avance de fase</h2>
+            <button class="btn-categoria" onclick="escolherCategoria('religiao')">📖 Religião</button>
+            <button class="btn-categoria" onclick="escolherCategoria('curiosidades')">💡 Curiosidades</button>
+            <button class="action" style="background: #6366f1; margin-top: 15px;" onclick="verRanking()">🏆 Ranking Global</button>
+        </div>
     </div>
 </div>
 
-</div>
-
 <script>
+// COLOQUE SUA URL DO GOOGLE APPS SCRIPT AQUI
+const URL_RANKING = "https://script.google.com/macros/s/AKfycbyfgwWVbpxLe35pXEytY5U5_6CgsYy0ZzdMMJ2E-jRsQujOO6J5Y3lfbOWR21Xi4j9rxw/exec";
 
-// URLs das planilhas por categoria
 const linksCategorias = {
     religiao: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTbLKo7OrAuSAlaKkHIEfg2q1Vl2i-b5Jlcpm6j3-SFm68wdcAwBMWyY5uWmtbo3yIy378ApaCrgzXn/pub?gid=2042818854&single=true&output=csv",
     curiosidades: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNuwwnAKhYDnsELndwC4tmIIGnRTwWThML03j-Viw2kwWtkylWT035Hj2amdB7j2Hcj0KfkS93Qi27/pub?gid=186362181&single=true&output=csv"
@@ -199,38 +268,29 @@ let perguntas = [];
 let atual = 0;
 let pontos = 0;
 let erros = 0;
+let totalCoins = 0;
 let listaDeErrosTexto = [];
 let tempo = 15;
 let timer;
 let globalTime = 0;
 
-// Função para iniciar o jogo com a categoria escolhida
 function escolherCategoria(cat) {
     urlFases = linksCategorias[cat];
-    document.getElementById("hud").style.display = "block";
-    
-    // Inicia o contador global apenas ao escolher a categoria
+    document.getElementById("hud").style.display = "flex";
     setInterval(() => {
         globalTime++;
         document.getElementById("globalTime").innerText = globalTime;
     }, 1000);
-
     carregarFases();
 }
 
 function carregarFases() {
     document.getElementById("quiz").innerHTML = "Carregando fases...";
-    
-    fetch(urlFases)
-    .then(r => r.text())
-    .then(data => {
+    fetch(urlFases).then(r => r.text()).then(data => {
         const linhas = data.trim().split("\n").slice(1);
         fases = linhas.map(l => {
             const c = l.split(",");
-            return {
-                url: c[1],
-                img: c[2]
-            };
+            return { url: c[1], img: c[2] };
         });
         carregarFase();
     });
@@ -241,35 +301,24 @@ function carregarFase() {
     pontos = 0;
     erros = 0;
     listaDeErrosTexto = [];
-
     const fase = fases[faseAtual];
     const img = fase.img?.trim();
-
     if (img && (img.includes(".jpg") || img.includes(".png") || img.includes(".jpeg") || img.includes(".webp"))) {
         document.body.style.backgroundImage = `url('${img}')`;
     } else {
         document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1529070538774-1843cb3265df')`;
     }
-
-    fetch(fase.url)
-    .then(r => r.text())
-    .then(data => {
+    fetch(fase.url).then(r => r.text()).then(data => {
         const linhas = data.trim().split("\n").slice(1);
         perguntas = linhas.map(l => {
             const c = l.split(",");
-            return {
-                pergunta: c[0],
-                resposta: c[1],
-                opcoes: shuffle([c[1], c[2], c[3], c[4]])
-            };
+            return { pergunta: c[0], resposta: c[1], opcoes: shuffle([c[1], c[2], c[3], c[4]]) };
         });
         mostrar();
     });
 }
 
-function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
-}
+function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
 
 function iniciarTimer() {
     clearInterval(timer);
@@ -288,55 +337,54 @@ function iniciarTimer() {
     }, 1000);
 }
 
-function mostrar() {
-    if (atual >= perguntas.length) {
-        fim();
-        return;
-    }
+function animaMoedas(x, y) {
+    const el = document.createElement("div");
+    el.className = "coin-effect";
+    el.innerText = "+10 💰";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+}
 
+function mostrar() {
+    if (atual >= perguntas.length) { fim(); return; }
     const totalFases = fases.length;
     const faseNum = faseAtual + 1;
     const q = perguntas[atual];
 
     document.getElementById("quiz").innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <button class="btn-voltar" onclick="location.reload()" style="width: auto; padding: 5px 15px; margin: 0;">⬅ Voltar</button>
-            <div class="fase-info" style="margin: 0;">📌 Fase ${faseNum} / ${totalFases}</div>
+            <button class="btn-voltar" onclick="location.reload()">⬅ Voltar</button>
+            <div class="fase-info">📌 Fase ${faseNum} / ${totalFases}</div>
         </div>
-
         <div class="timer">⏳ Tempo: <span id="timer">15</span>s</div>
-
         <h2>${q.pergunta}</h2>
-
         <div id="opcoes"></div>
     `;
 
     iniciarTimer();
-
     const div = document.getElementById("opcoes");
 
     q.opcoes.forEach(op => {
         const btn = document.createElement("button");
         btn.className = "option";
         btn.innerText = op;
-
-        btn.onclick = () => {
+        btn.onclick = (e) => {
             clearInterval(timer);
             document.querySelectorAll("button").forEach(b => b.disabled = true);
-
             if (op === q.resposta) {
                 btn.classList.add("correct");
                 pontos++;
+                totalCoins += 10;
+                document.getElementById("coinCount").innerText = totalCoins;
+                animaMoedas(e.clientX, e.clientY);
             } else {
                 btn.classList.add("wrong");
                 erros++;
                 listaDeErrosTexto.push(q.pergunta);
             }
-
-            setTimeout(() => {
-                atual++;
-                mostrar();
-            }, 600);
+            setTimeout(() => { atual++; mostrar(); }, 800);
         };
         div.appendChild(btn);
     });
@@ -346,160 +394,140 @@ function fim() {
     let html = "";
     if (erros === 0) {
         html = `
-            <h2>🏆 Fase concluída!</h2>
-            <button class="action" onclick="proximaFase()">Próxima Fase</button>
-        `;
+        <div class="fase-sucesso" style="text-align:center;">
+            <span style="font-size:50px;">🏆</span>
+            <h2 style="color:#facc15;">Fase Concluída!</h2>
+            <p>Moedas Acumuladas: <b>${pontos * 10}</b></p>
+            <button class="action" onclick="proximaFase()">INICIAR PRÓXIMA FASE ➔</button>
+        </div>`;
     } else {
         html = `
             <h2>❌ Você errou ${erros}</h2>
+            <!-- Botão Adicionado para testar o Ranking ao perder -->
+            <button class="action" style="background: #6366f1;" onclick="telaSalvarRanking()">Salvar Pontuação no Ranking</button>
+            
             <button class="action" onclick="tentarNovamente()">Tentar Novamente</button>
-            <div style="margin-top: 15px; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="margin-top: 15px;">
                 <button class="action" style="background: #00bcd4;" onclick="chamarMonetag()">📺 Ver Erros (Anúncio)</button>
             </div>
             <div id="box-erros" style="display:none; margin-top: 15px; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
                 <ul id="lista-final-erros"></ul>
-            </div>
-        `;
+            </div>`;
     }
     document.getElementById("quiz").innerHTML = html;
 }
 
 function chamarMonetag() {
-    const linkMonetag = "https://omg10.com/4/10956015"; 
-    window.open(linkMonetag, '_blank');
-    const btn = event.target;
-    btn.innerText = "Carregando...";
-    btn.disabled = true;
-    setTimeout(() => {
-        const box = document.getElementById("box-erros");
-        const lista = document.getElementById("lista-final-erros");
-        if (box) {
-            box.style.display = "block";
-            lista.innerHTML = listaDeErrosTexto.map(item => `<li>${item}</li>`).join('');
-        }
-        btn.innerText = "📺 Ver Erros (Anúncio)";
-        btn.disabled = false;
-    }, 2000); 
+    window.open("https://omg10.com/4/10956015", '_blank');
+    const box = document.getElementById("box-erros");
+    const lista = document.getElementById("lista-final-erros");
+    box.style.display = "block";
+    lista.innerHTML = listaDeErrosTexto.map(item => `<li>${item}</li>`).join('');
 }
 
-function tentarNovamente() { carregarFase(); }
+function tentarNovamente() { 
+    totalCoins = 0; 
+    document.getElementById("coinCount").innerText = totalCoins;
+    carregarFase(); 
+}
 
 function proximaFase() {
     faseAtual++;
-    
     if (faseAtual >= fases.length) {
-        // Para garantir o visual futurista, vamos injetar um CSS específico para esta tela
-        const estiloFinal = `
-            <style>
-                @keyframes glowPulse {
-                    0% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.2); }
-                    50% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.6); }
-                    100% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.2); }
-                }
-
-                @keyframes textGlow {
-                    from { text-shadow: 0 0 5px #fff, 0 0 10px #facc15; }
-                    to { text-shadow: 0 0 10px #fff, 0 0 20px #facc15, 0 0 30px #ca8a04; }
-                }
-
-                .final-card {
-                    background: linear-gradient(135deg, rgba(20,20,20,0.9) 0%, rgba(50,50,50,0.8) 100%);
-                    border: 2px solid #facc15;
-                    border-radius: 20px;
-                    padding: 40px 20px;
-                    text-align: center;
-                    animation: glowPulse 2s infinite ease-in-out;
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                /* Detalhe futurista nos cantos */
-                .final-card::before, .final-card::after {
-                    content: '';
-                    position: absolute;
-                    width: 30px;
-                    height: 30px;
-                    border: 3px solid #ca8a04;
-                }
-                
-                .final-card::before {
-                    top: 10px;
-                    left: 10px;
-                    border-right: none;
-                    border-bottom: none;
-                }
-
-                .final-card::after {
-                    bottom: 10px;
-                    right: 10px;
-                    border-left: none;
-                    border-top: none;
-                }
-
-                .vitoria-titulo {
-                    font-size: 32px;
-                    font-weight: bold;
-                    background: linear-gradient(to bottom, #fff 0%, #facc15 50%, #ca8a04 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    margin-bottom: 30px;
-                    animation: textGlow 1.5s infinite alternate;
-                    letter-spacing: 2px;
-                }
-
-                .vitoria-subtitulo {
-                    color: rgba(255,255,255,0.9);
-                    font-size: 16px;
-                    margin-bottom: 30px;
-                    line-height: 1.5;
-                }
-
-                .btn-recomecar {
-                    background: transparent;
-                    border: 2px solid #facc15;
-                    color: #facc15;
-                    font-weight: bold;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    transition: all 0.3s;
-                    box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
-                }
-
-                .btn-recomecar:hover {
-                    background: #facc15;
-                    color: #000;
-                    box-shadow: 0 0 20px rgba(250, 204, 21, 0.7);
-                    transform: scale(1.05);
-                }
-            </style>
-        `;
-
-        document.getElementById("quiz").innerHTML = `
-            ${estiloFinal}
-            <div class="final-card">
-                <div class="vitoria-titulo">🥇 JORNADA CONCLUÍDA 🥇</div>
-                
-                <div class="vitoria-subtitulo">
-                    Parabéns, Desafiante!<br>
-                    Você superou todas as fases com maestria e provou seu conhecimento.
-                </div>
-
-                <button class="action btn-recomecar" onclick="location.reload()">
-                    Escolher nova Missão
-                </button>
-            </div>
-        `;
+        telaSalvarRanking();
         return;
     }
     carregarFase();
 }
+
+/* NOVAS FUNÇÕES DO RANKING */
+
+function verRanking() {
+    const card = document.getElementById("quiz");
+    card.innerHTML = "<h2>Carregando Ranking...</h2>";
+    
+    fetch(URL_RANKING)
+    .then(r => r.json())
+    .then(data => {
+        let html = `<h2>🏆 TOP 5 JOGADORES</h2>`;
+        // Exibe apenas os 5 primeiros
+        data.slice(0,5).forEach((r, i) => {
+            html += `
+                <div class="rank-item">
+                    <span><span class="rank-pos">${i+1}º</span> ${r.nome}</span>
+                    <span style="color:#facc15">${r.pontos} pts</span>
+                </div>`;
+        });
+        html += `<button class="action" onclick="location.reload()" style="margin-top:20px;">VOLTAR AO MENU</button>`;
+        card.innerHTML = html;
+    })
+    .catch(() => {
+        card.innerHTML = `<h2>Ranking Indisponível</h2><button class="action" onclick="location.reload()">VOLTAR</button>`;
+    });
+}
+
+function telaSalvarRanking() {
+    document.getElementById("quiz").innerHTML = `
+        <div style="text-align:center;">
+            <h2 style="color:#facc15; font-size:30px;">🥇 PARABÉNS!</h2>
+            <p>Você completou todos os desafios!</p>
+            <p style="font-size:20px; margin-bottom:20px;">Total de Moedas: 💰 ${totalCoins}</p>
+            <hr style="opacity:0.2; margin-bottom:20px;">
+            <p>Digite seu nome para o Ranking:</p>
+            <input type="text" id="nomeRanking" placeholder="Seu Nome ou Apelido" maxlength="15">
+            <button id="btnEnviarRank" class="action" onclick="enviarParaRanking()">ENVIAR PARA O RANKING</button>
+            <button class="btn-voltar" onclick="location.reload()" style="width:100%; margin-top:10px;">SAIR</button>
+        </div>
+    `;
+}
+
+function enviarParaRanking(confirmado = false) {
+    const nome = document.getElementById("nomeRanking").value;
+    const btn = document.getElementById("btnEnviarRank");
+    
+    if(!nome) { alert("Por favor, digite seu nome!"); return; }
+    
+    btn.disabled = true;
+    btn.innerText = "Verificando...";
+
+    fetch(URL_RANKING, {
+        method: "POST",
+        body: JSON.stringify({ 
+            nome: nome, 
+            pontos: totalCoins,
+            forceUpdate: confirmado // Envia se é uma atualização confirmada ou não
+        })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.status === "exists") {
+            // Se o nome já existe, pergunta ao usuário
+            const desejaAtualizar = confirm(`O nome "${nome}" já está no ranking. Deseja atualizar sua posição com a pontuação atual (${totalCoins} moedas)?`);
+            
+            if (desejaAtualizar) {
+                enviarParaRanking(true); // Chama a função de novo, agora confirmando
+            } else {
+                btn.disabled = false;
+                btn.innerText = "ENVIAR PARA O RANKING";
+            }
+        } else {
+            // Se salvou com sucesso
+            verRanking();
+        }
+    })
+    .catch(() => {
+        // Se der erro de conexão (comum no Google Apps Script com POST)
+        // Tentamos tratar como sucesso caso o modo no-cors tenha sido necessário antes
+        alert("Erro ao processar. Certifique-se de que o Apps Script está configurado como 'Qualquer pessoa'.");
+        btn.disabled = false;
+        btn.innerText = "TENTAR NOVAMENTE";
+    });
+}
 </script>
 
-<!-- 🔥 BANNER RODAPÉ -->
 <div id="banner-footer" style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 320px; min-height: 50px;">
     <div id="surfe-container"></div>
 </div>
-
 <script src="//static.surfe.pro/js/net.js"></script>
 <script>
     function refreshSurfeBanner() {
