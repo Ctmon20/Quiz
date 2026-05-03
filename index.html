@@ -167,7 +167,7 @@ let perguntas = [];
 let atual = 0;
 let pontos = 0;
 let erros = 0;
-let listaDeErrosTexto = []; // Armazena as perguntas que o usuário errou
+let listaDeErrosTexto = [];
 
 let tempo = 15;
 let timer;
@@ -207,7 +207,7 @@ function carregarFase() {
     atual = 0;
     pontos = 0;
     erros = 0;
-    listaDeErrosTexto = []; // Limpa os erros ao iniciar/reiniciar fase
+    listaDeErrosTexto = [];
 
     const fase = fases[faseAtual];
 
@@ -259,7 +259,7 @@ function iniciarTimer() {
         if (tempo <= 0) {
             clearInterval(timer);
             erros++;
-            listaDeErrosTexto.push(perguntas[atual].pergunta); // Salva erro por tempo esgotado
+            listaDeErrosTexto.push(perguntas[atual].pergunta);
             atual++;
             mostrar();
         }
@@ -313,7 +313,7 @@ function mostrar() {
             } else {
                 btn.classList.add("wrong");
                 erros++;
-                listaDeErrosTexto.push(q.pergunta); // Salva a pergunta que errou
+                listaDeErrosTexto.push(q.pergunta);
             }
 
             setTimeout(() => {
@@ -358,15 +358,10 @@ function fim() {
 }
 
 function chamarMonetag() {
-    // Link direto da Monetag fornecido
     const linkMonetag = "https://omg10.com/4/10956015"; 
-    
-    // Abre o anúncio em nova aba
     window.open(linkMonetag, '_blank');
 
-    // Feedback visual e liberação dos erros após "visto"
     const btn = event.target;
-    const textoOriginal = btn.innerText;
     btn.innerText = "Carregando...";
     btn.disabled = true;
 
@@ -379,7 +374,7 @@ function chamarMonetag() {
             lista.innerHTML = listaDeErrosTexto.map(item => `<li>${item}</li>`).join('');
             box.scrollIntoView({ behavior: 'smooth' });
         }
-        btn.innerText = textoOriginal;
+        btn.innerText = "📺 Ver Erros (Anúncio)";
         btn.disabled = false;
     }, 2000); 
 }
@@ -389,20 +384,17 @@ function tentarNovamente() {
 }
 
 function proximaFase() {
-
     faseAtual++;
-
     if (faseAtual >= fases.length) {
         document.getElementById("quiz").innerHTML = "<h2>🎉 Você zerou o jogo!</h2>";
         return;
     }
-
     carregarFase();
 }
 
 </script>
 
-<!-- 🔥 BANNER RODAPÉ -->
+<!-- 🔥 BANNER RODAPÉ (RESTAURADO) -->
 <div id="banner-footer" style="
     position: fixed;
     bottom: 0;
@@ -421,26 +413,16 @@ function proximaFase() {
 <script>
     function refreshSurfeBanner() {
         const container = document.getElementById('surfe-container');
-        
-        // 1. Limpa o conteúdo anterior
         container.innerHTML = '';
-
-        // 2. Cria a tag <ins> do anúncio
         const ins = document.createElement('ins');
         ins.className = 'surfe-be';
         ins.setAttribute('data-sid', '420519');
         container.appendChild(ins);
-
-        // 3. Cria e executa o script de inicialização (push)
         const scriptPush = document.createElement('script');
         scriptPush.innerHTML = '(adsurfebe = window.adsurfebe || []).push({});';
         container.appendChild(scriptPush);
     }
-
-    // Primeira execução
     refreshSurfeBanner();
-
-    // Atualiza a cada 30 segundos
     setInterval(refreshSurfeBanner, 30000);
 </script>
 
