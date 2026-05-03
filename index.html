@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="QUIZ">
+    <meta name="apple-mobile-web-app-title" content="QUIZ">
+
+    <link rel="icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz por Fases</title>
@@ -14,7 +24,6 @@ body {
     align-items: center;
     font-family: Arial;
     position: relative;
-
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -36,7 +45,6 @@ body::before {
     color: white;
 }
 
-/* 🎮 topo estilo HUD */
 h1 {
     text-align: center;
     font-size: 22px;
@@ -51,7 +59,6 @@ h1 {
     opacity: 0.9;
 }
 
-/* 🎴 card principal estilo jogo */
 .card {
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(12px);
@@ -60,7 +67,6 @@ h1 {
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* 📌 fase estilo badge game */
 .fase-info {
     text-align: center;
     margin-bottom: 12px;
@@ -72,7 +78,6 @@ h1 {
     display: inline-block;
 }
 
-/* ⏱ timer estilo alerta */
 .timer {
     color: #facc15;
     font-weight: bold;
@@ -80,14 +85,12 @@ h1 {
     text-align: center;
 }
 
-/* pergunta estilo game */
 h2 {
     font-size: 18px;
     text-align: center;
     margin-bottom: 15px;
 }
 
-/* 🎮 botões estilo game mobile */
 button {
     width: 100%;
     padding: 14px;
@@ -99,7 +102,23 @@ button {
     transition: 0.2s;
 }
 
-/* opções */
+.btn-voltar {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: auto; /* Para não ocupar a largura toda */
+    display: inline-block;
+}
+
+.btn-voltar:hover {
+    background: rgba(239, 68, 68, 0.3); /* Fica levemente avermelhado no hover */
+}
+
 .option {
     background: rgba(255,255,255,0.12);
     color: white;
@@ -111,7 +130,6 @@ button {
     background: rgba(255,255,255,0.18);
 }
 
-/* feedback estilo game */
 .correct {
     background: linear-gradient(135deg, #22c55e, #16a34a);
 }
@@ -125,18 +143,21 @@ button {
     font-weight: bold;
 }
 
+/* Estilo para os botões do menu principal */
+.btn-categoria {
+    background: linear-gradient(135deg, #facc15, #ca8a04);
+    color: #000;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
 body {
     padding-bottom: 60px;
 }
-/* responsivo mobile */
-@media (max-width: 500px) {
-    .card {
-        padding: 15px;
-    }
 
-    h2 {
-        font-size: 16px;
-    }
+@media (max-width: 500px) {
+    .card { padding: 15px; }
+    h2 { font-size: 16px; }
 }
 </style>
 
@@ -148,70 +169,80 @@ body {
 
 <h1>🎯 Quiz por Fases</h1>
 
-<div class="counter">
+<div class="counter" id="hud" style="display:none;">
 ⏱ Tempo total: <span id="globalTime">0</span>s
 </div>
 
-<div id="quiz" class="card">Carregando...</div>
+<div id="quiz" class="card">
+    <!-- Menu Inicial -->
+    <div id="menu-inicial">
+        <h2 style="margin-bottom: 20px;">Escolha uma Categoria</h2>
+        <button class="btn-categoria" onclick="escolherCategoria('religiao')">📖 Religião</button>
+        <button class="btn-categoria" onclick="escolherCategoria('curiosidades')">💡 Curiosidades</button>
+    </div>
+</div>
 
 </div>
 
 <script>
 
-const urlFases = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTbLKo7OrAuSAlaKkHIEfg2q1Vl2i-b5Jlcpm6j3-SFm68wdcAwBMWyY5uWmtbo3yIy378ApaCrgzXn/pub?gid=2042818854&single=true&output=csv";
+// URLs das planilhas por categoria
+const linksCategorias = {
+    religiao: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTbLKo7OrAuSAlaKkHIEfg2q1Vl2i-b5Jlcpm6j3-SFm68wdcAwBMWyY5uWmtbo3yIy378ApaCrgzXn/pub?gid=2042818854&single=true&output=csv",
+    curiosidades: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNuwwnAKhYDnsELndwC4tmIIGnRTwWThML03j-Viw2kwWtkylWT035Hj2amdB7j2Hcj0KfkS93Qi27/pub?gid=186362181&single=true&output=csv"
+};
 
+let urlFases = "";
 let fases = [];
 let faseAtual = 0;
-
 let perguntas = [];
 let atual = 0;
 let pontos = 0;
 let erros = 0;
 let listaDeErrosTexto = [];
-
 let tempo = 15;
 let timer;
 let globalTime = 0;
 
-// ⏱ contador global
-setInterval(() => {
-    globalTime++;
-    document.getElementById("globalTime").innerText = globalTime;
-}, 1000);
+// Função para iniciar o jogo com a categoria escolhida
+function escolherCategoria(cat) {
+    urlFases = linksCategorias[cat];
+    document.getElementById("hud").style.display = "block";
+    
+    // Inicia o contador global apenas ao escolher a categoria
+    setInterval(() => {
+        globalTime++;
+        document.getElementById("globalTime").innerText = globalTime;
+    }, 1000);
 
-carregarFases();
+    carregarFases();
+}
 
 function carregarFases() {
-
+    document.getElementById("quiz").innerHTML = "Carregando fases...";
+    
     fetch(urlFases)
     .then(r => r.text())
     .then(data => {
-
         const linhas = data.trim().split("\n").slice(1);
-
         fases = linhas.map(l => {
             const c = l.split(",");
-
             return {
                 url: c[1],
                 img: c[2]
             };
         });
-
         carregarFase();
     });
 }
 
 function carregarFase() {
-
     atual = 0;
     pontos = 0;
     erros = 0;
     listaDeErrosTexto = [];
 
     const fase = fases[faseAtual];
-
-    // 🖼️ CORREÇÃO FORTE DA IMAGEM
     const img = fase.img?.trim();
 
     if (img && (img.includes(".jpg") || img.includes(".png") || img.includes(".jpeg") || img.includes(".webp"))) {
@@ -223,19 +254,15 @@ function carregarFase() {
     fetch(fase.url)
     .then(r => r.text())
     .then(data => {
-
         const linhas = data.trim().split("\n").slice(1);
-
         perguntas = linhas.map(l => {
             const c = l.split(",");
-
             return {
                 pergunta: c[0],
                 resposta: c[1],
                 opcoes: shuffle([c[1], c[2], c[3], c[4]])
             };
         });
-
         mostrar();
     });
 }
@@ -245,17 +272,12 @@ function shuffle(arr) {
 }
 
 function iniciarTimer() {
-
     clearInterval(timer);
     tempo = 15;
-
     document.getElementById("timer").innerText = tempo;
-
     timer = setInterval(() => {
-
         tempo--;
         document.getElementById("timer").innerText = tempo;
-
         if (tempo <= 0) {
             clearInterval(timer);
             erros++;
@@ -263,12 +285,10 @@ function iniciarTimer() {
             atual++;
             mostrar();
         }
-
     }, 1000);
 }
 
 function mostrar() {
-
     if (atual >= perguntas.length) {
         fim();
         return;
@@ -276,13 +296,12 @@ function mostrar() {
 
     const totalFases = fases.length;
     const faseNum = faseAtual + 1;
-
     const q = perguntas[atual];
 
     document.getElementById("quiz").innerHTML = `
-        
-        <div class="fase-info">
-            📌 Fase ${faseNum} / ${totalFases}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <button class="btn-voltar" onclick="location.reload()" style="width: auto; padding: 5px 15px; margin: 0;">⬅ Voltar</button>
+            <div class="fase-info" style="margin: 0;">📌 Fase ${faseNum} / ${totalFases}</div>
         </div>
 
         <div class="timer">⏳ Tempo: <span id="timer">15</span>s</div>
@@ -297,13 +316,11 @@ function mostrar() {
     const div = document.getElementById("opcoes");
 
     q.opcoes.forEach(op => {
-
         const btn = document.createElement("button");
         btn.className = "option";
         btn.innerText = op;
 
         btn.onclick = () => {
-
             clearInterval(timer);
             document.querySelectorAll("button").forEach(b => b.disabled = true);
 
@@ -321,15 +338,12 @@ function mostrar() {
                 mostrar();
             }, 600);
         };
-
         div.appendChild(btn);
     });
 }
 
 function fim() {
-
     let html = "";
-
     if (erros === 0) {
         html = `
             <h2>🏆 Fase concluída!</h2>
@@ -339,77 +353,154 @@ function fim() {
         html = `
             <h2>❌ Você errou ${erros}</h2>
             <button class="action" onclick="tentarNovamente()">Tentar Novamente</button>
-            
             <div style="margin-top: 15px; padding: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <p style="font-size: 13px; opacity: 0.8;">Quer saber quais questões você errou?</p>
-                <button class="action" style="background: #00bcd4;" onclick="chamarMonetag()">
-                    📺 Ver Erros (Anúncio)
-                </button>
+                <button class="action" style="background: #00bcd4;" onclick="chamarMonetag()">📺 Ver Erros (Anúncio)</button>
             </div>
-            
             <div id="box-erros" style="display:none; margin-top: 15px; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
-                <strong style="color: #facc15; font-size: 14px;">Questões para revisar:</strong>
-                <ul id="lista-final-erros" style="padding-left: 20px; font-size: 13px; color: #ddd; margin-top: 5px;"></ul>
+                <ul id="lista-final-erros"></ul>
             </div>
         `;
     }
-
     document.getElementById("quiz").innerHTML = html;
 }
 
 function chamarMonetag() {
     const linkMonetag = "https://omg10.com/4/10956015"; 
     window.open(linkMonetag, '_blank');
-
     const btn = event.target;
     btn.innerText = "Carregando...";
     btn.disabled = true;
-
     setTimeout(() => {
         const box = document.getElementById("box-erros");
         const lista = document.getElementById("lista-final-erros");
-        
         if (box) {
             box.style.display = "block";
             lista.innerHTML = listaDeErrosTexto.map(item => `<li>${item}</li>`).join('');
-            box.scrollIntoView({ behavior: 'smooth' });
         }
         btn.innerText = "📺 Ver Erros (Anúncio)";
         btn.disabled = false;
     }, 2000); 
 }
 
-function tentarNovamente() {
-    carregarFase();
-}
+function tentarNovamente() { carregarFase(); }
 
 function proximaFase() {
     faseAtual++;
+    
     if (faseAtual >= fases.length) {
-        document.getElementById("quiz").innerHTML = "<h2>🎉 Você zerou o jogo!</h2>";
+        // Para garantir o visual futurista, vamos injetar um CSS específico para esta tela
+        const estiloFinal = `
+            <style>
+                @keyframes glowPulse {
+                    0% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.2); }
+                    50% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.6); }
+                    100% { box-shadow: 0 0 5px rgba(250, 204, 21, 0.2); }
+                }
+
+                @keyframes textGlow {
+                    from { text-shadow: 0 0 5px #fff, 0 0 10px #facc15; }
+                    to { text-shadow: 0 0 10px #fff, 0 0 20px #facc15, 0 0 30px #ca8a04; }
+                }
+
+                .final-card {
+                    background: linear-gradient(135deg, rgba(20,20,20,0.9) 0%, rgba(50,50,50,0.8) 100%);
+                    border: 2px solid #facc15;
+                    border-radius: 20px;
+                    padding: 40px 20px;
+                    text-align: center;
+                    animation: glowPulse 2s infinite ease-in-out;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                /* Detalhe futurista nos cantos */
+                .final-card::before, .final-card::after {
+                    content: '';
+                    position: absolute;
+                    width: 30px;
+                    height: 30px;
+                    border: 3px solid #ca8a04;
+                }
+                
+                .final-card::before {
+                    top: 10px;
+                    left: 10px;
+                    border-right: none;
+                    border-bottom: none;
+                }
+
+                .final-card::after {
+                    bottom: 10px;
+                    right: 10px;
+                    border-left: none;
+                    border-top: none;
+                }
+
+                .vitoria-titulo {
+                    font-size: 32px;
+                    font-weight: bold;
+                    background: linear-gradient(to bottom, #fff 0%, #facc15 50%, #ca8a04 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-bottom: 30px;
+                    animation: textGlow 1.5s infinite alternate;
+                    letter-spacing: 2px;
+                }
+
+                .vitoria-subtitulo {
+                    color: rgba(255,255,255,0.9);
+                    font-size: 16px;
+                    margin-bottom: 30px;
+                    line-height: 1.5;
+                }
+
+                .btn-recomecar {
+                    background: transparent;
+                    border: 2px solid #facc15;
+                    color: #facc15;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: all 0.3s;
+                    box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+                }
+
+                .btn-recomecar:hover {
+                    background: #facc15;
+                    color: #000;
+                    box-shadow: 0 0 20px rgba(250, 204, 21, 0.7);
+                    transform: scale(1.05);
+                }
+            </style>
+        `;
+
+        document.getElementById("quiz").innerHTML = `
+            ${estiloFinal}
+            <div class="final-card">
+                <div class="vitoria-titulo">🥇 JORNADA CONCLUÍDA 🥇</div>
+                
+                <div class="vitoria-subtitulo">
+                    Parabéns, Desafiante!<br>
+                    Você superou todas as fases com maestria e provou seu conhecimento.
+                </div>
+
+                <button class="action btn-recomecar" onclick="location.reload()">
+                    Escolher nova Missão
+                </button>
+            </div>
+        `;
         return;
     }
     carregarFase();
 }
-
 </script>
 
-<!-- 🔥 BANNER RODAPÉ (RESTAURADO) -->
-<div id="banner-footer" style="
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: transparent;
-    min-width: 320px;
-    min-height: 50px;
-">
+<!-- 🔥 BANNER RODAPÉ -->
+<div id="banner-footer" style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 320px; min-height: 50px;">
     <div id="surfe-container"></div>
 </div>
 
 <script src="//static.surfe.pro/js/net.js"></script>
-
 <script>
     function refreshSurfeBanner() {
         const container = document.getElementById('surfe-container');
@@ -423,10 +514,7 @@ function proximaFase() {
         container.appendChild(scriptPush);
     }
     refreshSurfeBanner();
-    setInterval(refreshSurfeBanner, 30000);
+    setInterval(refreshSurfeBanner, 60000);
 </script>
-
-<script src="https://www.highperformanceformat.com/2a5e7302edec5e07fb8153e06aa96446/invoke.js"></script>
-
 </body>
 </html>
