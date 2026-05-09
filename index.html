@@ -60,6 +60,31 @@ h1 {
     filter: drop-shadow(0 2px 8px rgba(250, 204, 21, 0.4));
 }
 
+/* Modal de Confirmação Customizado */
+#modal-confirmacao {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 24px;
+    z-index: 100;
+    text-align: center;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+.modal-btns {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-confirmar { background: #10b981; color: white; border-radius: 12px; }
+.btn-cancelar { background: #ef4444; color: white; border-radius: 12px; }
+
 .logo-quiz {
     width: 120px;
     height: 120px;
@@ -88,6 +113,31 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 20px;
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.stat-label { color: #94a3b8; font-size: 14px; }
+.stat-value { font-weight: bold; font-size: 18px; }
+
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
 }
 
 .coin-display {
@@ -247,18 +297,19 @@ body { padding-bottom: 80px; }
             <h2 style="margin-bottom: 20px;">Teste seu conhecimento e avance de fase</h2>
             <button class="btn-categoria" onclick="escolherCategoria('religiao')">📖 Religião</button>
             <button class="btn-categoria" onclick="escolherCategoria('curiosidades')">💡 Curiosidades</button>
+            <button class="btn-categoria" onclick="escolherCategoria('Futebol')">⚽ Futebol</button>
             <button class="action" style="background: #6366f1; margin-top: 15px;" onclick="verRanking()">🏆 Ranking Global</button>
         </div>
     </div>
 </div>
 
 <script>
-// COLOQUE SUA URL DO GOOGLE APPS SCRIPT AQUI
-const URL_RANKING = "https://script.google.com/macros/s/AKfycbyfgwWVbpxLe35pXEytY5U5_6CgsYy0ZzdMMJ2E-jRsQujOO6J5Y3lfbOWR21Xi4j9rxw/exec";
+const URL_RANKING = "https://script.google.com/macros/s/AKfycbwh_l4xRcnvC6rTlwzHsnlvRijm8j9pfVVd0YVnut0zQcwA_uL9_w82x_9aWx6june30Q/exec";
 
 const linksCategorias = {
     religiao: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTbLKo7OrAuSAlaKkHIEfg2q1Vl2i-b5Jlcpm6j3-SFm68wdcAwBMWyY5uWmtbo3yIy378ApaCrgzXn/pub?gid=2042818854&single=true&output=csv",
-    curiosidades: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNuwwnAKhYDnsELndwC4tmIIGnRTwWThML03j-Viw2kwWtkylWT035Hj2amdB7j2Hcj0KfkS93Qi27/pub?gid=186362181&single=true&output=csv"
+    curiosidades: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNuwwnAKhYDnsELndwC4tmIIGnRTwWThML03j-Viw2kwWtkylWT035Hj2amdB7j2Hcj0KfkS93Qi27/pub?gid=186362181&single=true&output=csv",
+    Futebol: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSzToXmaCiC0tqGFS3Ejc_kHeW1JI9TRvm94HGAFau_AFwJSxdpGUsu2UXe4LMTtoFLP0E-cSw9G1RL/pub?gid=905938198&single=true&output=csv"
 };
 
 let urlFases = "";
@@ -273,8 +324,10 @@ let listaDeErrosTexto = [];
 let tempo = 15;
 let timer;
 let globalTime = 0;
+let categoriaAtualNome = ""; // AJUSTE: Variável para armazenar a categoria
 
 function escolherCategoria(cat) {
+    categoriaAtualNome = cat.toUpperCase(); // AJUSTE: Armazena o nome da categoria selecionada
     urlFases = linksCategorias[cat];
     document.getElementById("hud").style.display = "flex";
     setInterval(() => {
@@ -392,27 +445,67 @@ function mostrar() {
 
 function fim() {
     let html = "";
+    const totalGanhos = pontos * 10;
+
     if (erros === 0) {
         html = `
-        <div class="fase-sucesso" style="text-align:center;">
-            <span style="font-size:50px;">🏆</span>
-            <h2 style="color:#facc15;">Fase Concluída!</h2>
-            <p>Moedas Acumuladas: <b>${pontos * 10}</b></p>
-            <button class="action" onclick="proximaFase()">INICIAR PRÓXIMA FASE ➔</button>
+        <div style="text-align:center; animation: fadeIn 0.5s ease;">
+            <div style="font-size:60px; margin-bottom: 10px; filter: drop-shadow(0 0 15px #facc15);">🏆</div>
+            <h2 style="color:#facc15; margin-bottom: 5px;">Fase Impecável!</h2>
+            <p style="color: #94a3b8; font-size: 14px;">Você não cometeu nenhum erro.</p>
+
+            <div class="result-card">
+                <div class="stat-row">
+                    <span class="stat-label">💰 Moedas da Fase</span>
+                    <span class="stat-value" style="color: #facc15;">+${totalGanhos}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">⭐ Bônus de Precisão</span>
+                    <span class="stat-value" style="color: #10b981;">100%</span>
+                </div>
+            </div>
+
+            <button class="action" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="proximaFase()">
+                PRÓXIMA FASE ➔
+            </button>
         </div>`;
     } else {
         html = `
-            <h2>❌ Você errou ${erros}</h2>
-            <!-- Botão Adicionado para testar o Ranking ao perder -->
-            <button class="action" style="background: #6366f1;" onclick="telaSalvarRanking()">Salvar Pontuação no Ranking</button>
-            
-            <button class="action" onclick="tentarNovamente()">Tentar Novamente</button>
-            <div style="margin-top: 15px;">
-                <button class="action" style="background: #00bcd4;" onclick="chamarMonetag()">📺 Ver Erros (Anúncio)</button>
+        <div style="text-align:center; animation: fadeIn 0.5s ease;">
+            <div style="font-size:50px; margin-bottom: 10px;">📉</div>
+            <h2 style="color:#ef4444; margin-bottom: 5px;">Quase lá!</h2>
+            <p style="color: #94a3b8; font-size: 14px;">Você teve ${erros} erro(s) nesta fase.</p>
+
+            <div class="result-card">
+                <div class="stat-row">
+                    <span class="stat-label">💰 Moedas Acumuladas</span>
+                    <span class="stat-value">${totalCoins}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">📍 Fase Atual</span>
+                    <span class="stat-value">${faseAtual + 1}</span>
+                </div>
             </div>
-            <div id="box-erros" style="display:none; margin-top: 15px; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
-                <ul id="lista-final-erros"></ul>
-            </div>`;
+
+            <div class="btn-group">
+                <button class="action" style="margin:0; background: #6366f1;" onclick="telaSalvarRanking()">
+                    🏆 SALVAR NO RANKING
+                </button>
+                
+                <button class="action" style="margin:0; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="tentarNovamente()">
+                    🔄 TENTAR NOVAMENTE
+                </button>
+
+                <button class="action" style="margin:0; background: #00bcd4; font-size: 13px;" onclick="chamarMonetag()">
+                    👀 Descobrir respostas erradas
+                </button>
+            </div>
+
+            <div id="box-erros" style="display:none; margin-top: 15px; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.2);">
+                <p style="color: #ef4444; font-weight: bold; margin-top: 0;">Revise seus erros:</p>
+                <ul id="lista-final-erros" style="font-size: 13px; color: #cbd5e1; padding-left: 20px;"></ul>
+            </div>
+        </div>`;
     }
     document.getElementById("quiz").innerHTML = html;
 }
@@ -440,8 +533,6 @@ function proximaFase() {
     carregarFase();
 }
 
-/* NOVAS FUNÇÕES DO RANKING */
-
 function verRanking() {
     const card = document.getElementById("quiz");
     card.innerHTML = "<h2>Carregando Ranking...</h2>";
@@ -450,14 +541,21 @@ function verRanking() {
     .then(r => r.json())
     .then(data => {
         let html = `<h2>🏆 TOP 5 JOGADORES</h2>`;
-        // Exibe apenas os 5 primeiros
+        
         data.slice(0,5).forEach((r, i) => {
+            // AJUSTE: Adicionamos o r.categoria abaixo do nome ou ao lado
             html += `
-                <div class="rank-item">
-                    <span><span class="rank-pos">${i+1}º</span> ${r.nome}</span>
-                    <span style="color:#facc15">${r.pontos} pts</span>
+                <div class="rank-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <span><span class="rank-pos">${i+1}º</span> <b>${r.nome}</b></span>
+                        <span style="color:#facc15; font-weight: bold;">${r.pontos} pts</span>
+                    </div>
+                    <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">
+                        📂 Categoria: ${r.categoria || "Geral"}
+                    </div>
                 </div>`;
         });
+        
         html += `<button class="action" onclick="location.reload()" style="margin-top:20px;">VOLTAR AO MENU</button>`;
         card.innerHTML = html;
     })
@@ -467,16 +565,34 @@ function verRanking() {
 }
 
 function telaSalvarRanking() {
+    const completouTudo = faseAtual >= fases.length;
+    const titulo = completouTudo ? "🥇 PARABÉNS!" : "🎮 FIM DE JOGO";
+    const subtitulo = completouTudo 
+        ? "Você completou todos os desafios!" 
+        : `Você chegou até a <b>Fase ${faseAtual + 1}</b>!`;
+
     document.getElementById("quiz").innerHTML = `
         <div style="text-align:center;">
-            <h2 style="color:#facc15; font-size:30px;">🥇 PARABÉNS!</h2>
-            <p>Você completou todos os desafios!</p>
-            <p style="font-size:20px; margin-bottom:20px;">Total de Moedas: 💰 ${totalCoins}</p>
-            <hr style="opacity:0.2; margin-bottom:20px;">
-            <p>Digite seu nome para o Ranking:</p>
+            <h2 style="color:#facc15; font-size:30px;">${titulo}</h2>
+            <p>${subtitulo}</p>
+            
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; margin: 15px 0;">
+                <p style="font-size:14px; color: #94a3b8; margin: 0;">Sua Pontuação Final</p>
+                <p style="font-size:28px; font-weight: bold; margin: 5px 0;">💰 ${totalCoins}</p>
+            </div>
+
+            <hr style="opacity:0.1; margin-bottom:20px;">
+            
+            <p style="font-size: 14px; margin-bottom: 10px;">Registre seu nome no Ranking Global:</p>
             <input type="text" id="nomeRanking" placeholder="Seu Nome ou Apelido" maxlength="15">
-            <button id="btnEnviarRank" class="action" onclick="enviarParaRanking()">ENVIAR PARA O RANKING</button>
-            <button class="btn-voltar" onclick="location.reload()" style="width:100%; margin-top:10px;">SAIR</button>
+            
+            <button id="btnEnviarRank" class="action" onclick="enviarParaRanking()">
+                🚀 ENVIAR PONTUAÇÃO
+            </button>
+            
+            <button class="btn-voltar" onclick="location.reload()" style="width:100%; margin-top:10px;">
+                VOLTAR AO MENU
+            </button>
         </div>
     `;
 }
@@ -485,6 +601,9 @@ function enviarParaRanking(confirmado = false) {
     const nome = document.getElementById("nomeRanking").value;
     const btn = document.getElementById("btnEnviarRank");
     
+    // AJUSTE: Garante que "Geral" seja usado apenas se categoriaAtualNome falhar
+    const categoriaParaSalvar = (categoriaAtualNome && categoriaAtualNome !== "") ? categoriaAtualNome : "GERAL"; 
+
     if(!nome) { alert("Por favor, digite seu nome!"); return; }
     
     btn.disabled = true;
@@ -495,54 +614,48 @@ function enviarParaRanking(confirmado = false) {
         body: JSON.stringify({ 
             nome: nome, 
             pontos: totalCoins,
-            forceUpdate: confirmado // Envia se é uma atualização confirmada ou não
+            categoria: categoriaParaSalvar,
+            forceUpdate: confirmado 
         })
     })
     .then(r => r.json())
     .then(res => {
         if (res.status === "exists") {
-            // Se o nome já existe, pergunta ao usuário
-            const desejaAtualizar = confirm(`O nome "${nome}" já está no ranking. Deseja atualizar sua posição com a pontuação atual (${totalCoins} moedas)?`);
-            
-            if (desejaAtualizar) {
-                enviarParaRanking(true); // Chama a função de novo, agora confirmando
-            } else {
-                btn.disabled = false;
-                btn.innerText = "ENVIAR PARA O RANKING";
-            }
+            const modal = document.createElement("div");
+            modal.id = "modal-confirmacao";
+            modal.innerHTML = `
+                <h2 style="color:#facc15;">Recorde em ${categoriaParaSalvar}</h2>
+                <p>O nome <b>${nome}</b> já tem pontos nesta categoria. Atualizar para <b>${totalCoins}</b>?</p>
+                <div class="modal-btns">
+                    <button class="btn-confirmar" id="btnSim">SIM</button>
+                    <button class="btn-cancelar" id="btnNao">NÃO</button>
+                </div>
+            `;
+            document.getElementById("quiz").appendChild(modal);
+
+            document.getElementById("btnSim").onclick = () => { modal.remove(); enviarParaRanking(true); };
+            document.getElementById("btnNao").onclick = () => { modal.remove(); btn.disabled = false; btn.innerText = "🚀 ENVIAR PONTUAÇÃO"; };
         } else {
-            // Se salvou com sucesso
             verRanking();
         }
     })
     .catch(() => {
-        // Se der erro de conexão (comum no Google Apps Script com POST)
-        // Tentamos tratar como sucesso caso o modo no-cors tenha sido necessário antes
-        alert("Erro ao processar. Certifique-se de que o Apps Script está configurado como 'Qualquer pessoa'.");
+        alert("Erro ao salvar. Verifique a conexão.");
         btn.disabled = false;
-        btn.innerText = "TENTAR NOVAMENTE";
+        btn.innerText = "🚀 ENVIAR PONTUAÇÃO";
     });
 }
 </script>
 
+<!-- Novo Banner Footer -->
 <div id="banner-footer" style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 320px; min-height: 50px;">
-    <div id="surfe-container"></div>
+    <script>
+        (function(s){
+            s.dataset.zone='10982987';
+            s.src='https://nap5k.com/tag.min.js';
+        })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
+    </script>
 </div>
-<script src="//static.surfe.pro/js/net.js"></script>
-<script>
-    function refreshSurfeBanner() {
-        const container = document.getElementById('surfe-container');
-        container.innerHTML = '';
-        const ins = document.createElement('ins');
-        ins.className = 'surfe-be';
-        ins.setAttribute('data-sid', '420519');
-        container.appendChild(ins);
-        const scriptPush = document.createElement('script');
-        scriptPush.innerHTML = '(adsurfebe = window.adsurfebe || []).push({});';
-        container.appendChild(scriptPush);
-    }
-    refreshSurfeBanner();
-    setInterval(refreshSurfeBanner, 60000);
 </script>
 </body>
 </html>
